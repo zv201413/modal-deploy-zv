@@ -22,12 +22,9 @@ jobs:
           pip install modal
 
       - name: Deploy with Modal
+        env:
+          MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
+          MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
         run: |
           set -euo pipefail
-          TOKEN_ID="${{ secrets.MODAL_TOKEN_ID }}"
-          TOKEN_SECRET="${{ secrets.MODAL_TOKEN_SECRET }}"
-          if [ -n "$TOKEN_ID" ] && [ -n "$TOKEN_SECRET" ]; then
-            export MODAL_TOKEN_ID="$TOKEN_ID"
-            export MODAL_TOKEN_SECRET="$TOKEN_SECRET"
-          fi
           modal deploy main.py
