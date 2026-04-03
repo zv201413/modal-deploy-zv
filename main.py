@@ -3,11 +3,15 @@ import subprocess
 import os
 import base64
 
+INSTALL_SCRIPT_VERSION = 1
+
 app = modal.App("vevc-app")
 vevc_image = (
     modal.Image.debian_slim()
         .apt_install("curl", "unzip", "supervisor", "procps")
-        .run_commands("curl -sSL https://raw.githubusercontent.com/vevc/modal-deploy/refs/heads/main/install.sh | bash")
+        .run_commands(
+            f'curl -sSL "https://raw.githubusercontent.com/vevc/modal-deploy/refs/heads/main/install.sh?v={INSTALL_SCRIPT_VERSION}" | bash'
+        )
         .pip_install("fastapi[standard]")
 )
 
@@ -16,6 +20,7 @@ _supervisor_started = False
 def start_supervisor():
     global _supervisor_started
     if not _supervisor_started:
+        os.environ["ENABLE_SC"] = "true" if "E" in os.environ else "false"
         subprocess.run(["supervisord"], env=os.environ.copy())
         _supervisor_started = True
 
