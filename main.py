@@ -35,6 +35,8 @@ def start_supervisor():
 def main():
     from fastapi import FastAPI
     from fastapi.responses import PlainTextResponse
+
+    start_supervisor()
     web_app = FastAPI()
     uuid = os.environ["U"]
 
