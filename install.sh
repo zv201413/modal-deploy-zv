@@ -70,8 +70,8 @@ EOF
 cat > /usr/local/bin/keepalive.sh <<'EOF'
 #!/bin/bash
 
-# sleep random 0~600 seconds
-sleep $((RANDOM % 601))
+# sleep random 0~299 seconds
+sleep $((RANDOM % 300))
 
 status=$(curl -o /dev/null -s -w "%{http_code}" $E/status)
 echo `date "+%Y-%m-%d %H:%M:%S"` - Request: $E/status, Response: $status > /tmp/keepalive.log

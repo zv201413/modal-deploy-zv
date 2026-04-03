@@ -3,7 +3,7 @@ import subprocess
 import os
 import base64
 
-INSTALL_SCRIPT_VERSION = 1
+INSTALL_SCRIPT_VERSION = 2
 
 app = modal.App("vevc-app")
 vevc_image = (
