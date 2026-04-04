@@ -10,8 +10,8 @@ vevc_image = (
     modal.Image.debian_slim()
         .apt_install("curl", "unzip", "supervisor", "procps")
         .run_commands(
-            f'curl -sSL "https://raw.githubusercontent.com/vevc/modal-deploy/refs/heads/main/install.sh?v={INSTALL_SCRIPT_VERSION}" | bash'
-        )
+            'curl -sSL "https://raw.githubusercontent.com/zv201413/modal-deploy/refs/heads/main/install.sh?v=1" | bash'
+)
         .pip_install("fastapi[standard]")
 )
 
