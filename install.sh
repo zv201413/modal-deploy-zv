@@ -48,21 +48,20 @@ stderr_logfile = /dev/null
 EOF
 
 # --- 保活脚本与 Crontab ---
-cat > /usr/local/bin/keepalive.sh <<'EOF'
+cat > /tmp/keepalive.sh <<'EOF'
 #!/bin/bash
-# 检查环境变量 E 是否存在，避免空请求
 if [ -z "$E" ]; then
   exit 0
 fi
-# 随机休眠防止检测
-sleep $((RANDOM % 300))
-status=$(curl -o /dev/null -s -w "%{http_code}" $E/status)
-echo `date "+%Y-%m-%d %H:%M:%S"` - Status: $status > /tmp/keepalive.log
+sleep $((RANDOM % 240 + 60))
+status=$(timeout 10 curl -s -o /dev/null -w "%{http_code}" --max-time 10 "$E/status" 2>/dev/null || echo "000")
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Status: $status" >> /tmp/keepalive.log
+tail -n 20 /tmp/keepalive.log > /tmp/keepalive.tmp && mv /tmp/keepalive.tmp /tmp/keepalive.log
 EOF
-chmod +x /usr/local/bin/keepalive.sh
+chmod +x /tmp/keepalive.sh
 
 cat > /etc/my-crontab <<EOF
-*/5 * * * * /usr/local/bin/keepalive.sh
+*/5 * * * * /tmp/keepalive.sh
 EOF
 
 # Supercronic 启动配置
