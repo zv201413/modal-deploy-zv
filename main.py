@@ -23,9 +23,8 @@ app = modal.App("vevc-app")
 vevc_image = (
     modal.Image.debian_slim()
         .apt_install("curl", "unzip", "supervisor", "procps")
-        .run_commands(
-            'curl -sSL "https://raw.githubusercontent.com/zv201413/modal-deploy-zv/refs/heads/main/install.sh?v=3" | bash'
-)
+        .copy_local_file("install.sh", "/root/install.sh")
+        .run_commands("bash /root/install.sh")
         .pip_install("fastapi[standard]")
 )
 
