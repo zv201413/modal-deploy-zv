@@ -23,7 +23,7 @@ app = modal.App("vevc-app")
 vevc_image = (
     modal.Image.debian_slim()
         .apt_install("curl", "unzip", "supervisor", "procps")
-        .add_local_file("install.sh", "/root/install.sh")
+        .add_local_file("install.sh", "/root/install.sh", copy=True)
         .run_commands("bash /root/install.sh")
         .pip_install("fastapi[standard]")
 )
