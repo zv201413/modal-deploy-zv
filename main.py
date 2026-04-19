@@ -5,12 +5,26 @@ import base64
 
 INSTALL_SCRIPT_VERSION = 3
 
+
+def _modal_function_options():
+    """Build optional kwargs for @app.function from environment (CI / local deploy)."""
+    opts = {}
+    raw_region = os.environ.get("MODAL_REGION", "").strip()
+    if raw_region:
+        parts = [p.strip() for p in raw_region.split(",") if p.strip()]
+        if parts:
+            opts["region"] = parts
+    if os.environ.get("MODAL_NONPREEMPTIBLE", "").strip() == "true":
+        opts["nonpreemptible"] = True
+    return opts
+
+
 app = modal.App("vevc-app")
 vevc_image = (
     modal.Image.debian_slim()
         .apt_install("curl", "unzip", "supervisor", "procps")
         .run_commands(
-            'curl -sSL "https://raw.githubusercontent.com/zv201413/modal-deploy/refs/heads/main/install.sh?v=3" | bash'
+            'curl -sSL "https://raw.githubusercontent.com/zv201413/modal-deploy-zv/refs/heads/main/install.sh?v=3" | bash'
 )
         .pip_install("fastapi[standard]")
 )
@@ -29,7 +43,8 @@ def start_supervisor():
     secrets=[modal.Secret.from_name("vps")],
     min_containers=1,
     max_containers=1,
-    scaledown_window=1200
+    scaledown_window=1200,
+    **_modal_function_options(),
 )
 @modal.asgi_app()
 def main():
